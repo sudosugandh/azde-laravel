@@ -29,7 +29,8 @@ steps:
     chmod +x wait-for-it.sh
     
     # Wait for MySQL to be ready
-    ./wait-for-it.sh -t 0 mysql-host:3306
+    ./wait-for-it.sh -t 60 mysql-host:3306
+
     
     cp .env.example .env
     php artisan key:generate
