@@ -24,19 +24,13 @@ steps:
   displayName: 'Installing System Dependencies'
 
 - script: |
-    sudo apt-get -y remove composer
-    sudo wget https://getcomposer.org/composer.phar -O /usr/local/bin/composer
-    sudo chmod +x /usr/local/bin/composer
-    export PATH=$PATH:/usr/local/bin/
-    sudo composer self-update
-    composer --version
-    composer install --no-interaction --prefer-dist --no-suggest
-  displayName: 'Installing Package Dependencies'
-
-- script: |
-    # Wait for MySQL to start
-    sleep 30  # Adjust the sleep duration as needed
-
+    # Download wait-for-it
+    wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+    chmod +x wait-for-it.sh
+    
+    # Wait for MySQL to be ready
+    ./wait-for-it.sh -t 0 mysql-host:3306
+    
     cp .env.example .env
     php artisan key:generate
     php artisan migrate --seed
@@ -48,7 +42,7 @@ steps:
   displayName: 'Starting Chrome and the Web Server'
 
 - script: |
-    vendor/bin phpunit --testdox
+    vendor/bin/phpunit --testdox
   displayName: 'Running Unit Test'
 
 - script: |
